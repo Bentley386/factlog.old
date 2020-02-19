@@ -1,2 +1,2 @@
-# factlog
+# FACTLOG
 Repository for the FACTLOG project.
