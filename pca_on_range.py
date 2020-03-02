@@ -19,6 +19,7 @@ import pandas as pd
 import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 from dotenv import load_dotenv
 
 # get settings from .env file
@@ -66,6 +67,9 @@ if __name__ == "__main__":
                             index = values["timestamp"].unique(),
                             columns = values["sensors_id"].unique())
     newTable.to_csv(os.path.join(args.save_location, 'sensor_values_without_nan.csv'))
+
+    # standardize the data
+    newTable = StandardScaler().fit_transform(newTable)
 
     # PCA
     pca = PCA()
