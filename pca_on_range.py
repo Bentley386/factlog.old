@@ -63,17 +63,19 @@ if __name__ == "__main__":
 
     # create dataframe where NaN are replaced by mean value of a column
     imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
-    newTable = pd.DataFrame(data = imp_mean.fit_transform(table),
+    new_table = pd.DataFrame(data = imp_mean.fit_transform(table),
                             index = values["timestamp"].unique(),
                             columns = values["sensors_id"].unique())
-    newTable.to_csv(os.path.join(args.save_location, 'sensor_values_without_nan.csv'))
+    new_table.to_csv(os.path.join(args.save_location, 'sensor_values_without_nan.csv'))
 
     # standardize the data
-    newTable = StandardScaler().fit_transform(newTable)
+    new_table = pd.DataFrame(data = StandardScaler().fit_transform(new_table),
+                                index = new_table.index, columns = new_table.columns)
 
     # PCA
     pca = PCA()
-    pca.fit(newTable)
+    principal_components = pca.fit_transform(new_table)
+    principal_components = pd.DataFrame(principal_components)
 
     # save components and singular values
     np.save(os.path.join(args.save_location, 'components'), pca.components_)
@@ -84,3 +86,9 @@ if __name__ == "__main__":
     sensor = table.columns[np.argmax(np.abs(pca.components_[0]))]
     print("Sensor with the biggest coefficient:")
     print(dt.sdf[dt.sdf.sensorid == sensor].to_string())
+
+    # create list of sensor ids from most important sensor to the least important one
+    sensor_importance = []
+    for component in pca.components_:
+        sensor_importance.append(table.columns[np.argmax(np.abs(component))])
+    np.save(os.path.join(args.save_location, 'sensor_importance'), sensor_importance)
