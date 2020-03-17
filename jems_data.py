@@ -21,8 +21,13 @@ class DieselDs:
 
     def load(self, sensorId, type="raw"):
         """
-        retrieving timeseries data from MSSQL
-        results is stored into self.df pandas dataframe
+        Retrieve values of sensor with sensorId from MSSQL.
+        The 'type' argument determines the frequency type of the data:
+            - raw: all values
+            - min: minutely values
+            - hour: hourly values
+            - day: daily values
+        Return results in self.df pandas dataframe - schema as in DB.
         """
 
         # selecting the correct table
@@ -42,8 +47,10 @@ class DieselDs:
 
     def load_range(self, start_date, end_date, type="raw"):
         """
-        retrieving timeseries data between start_date and end_date from MSSQL
-        results is stored into self.df pandas dataframe
+        Retrieve sensor values of all sensors between start_date and end_date from MSSQL.
+        The 'type' argument determines the frequency type of the data (details
+        in docstring of load above).
+        Return results in self.df pandas dataframe - schema as in DB.
         """
 
         # selecting the correct table
