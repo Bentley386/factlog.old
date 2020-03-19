@@ -114,15 +114,12 @@ def reshape_sensor_data(input_df):
     """
     def sensor_value_to_table(sensor_row, table):
         """Write a sensor value to the reshaped table."""
-        print(f'Row: {sensor_row.name}')
         table.at[sensor_row['timestamp'], sensor_row['sensors_id']] = sensor_row['value']
 
-    print('Preparing empty dataframe')
     # prepare the reshaped table
     output_df = pd.DataFrame(
         index = np.sort(input_df["timestamp"].unique()),
         columns = np.sort(input_df["sensors_id"].unique()))
     # copy individual sensor values
-    print('Applying function')
     input_df.apply(lambda row: sensor_value_to_table(row, output_df), axis=1)
     return output_df
