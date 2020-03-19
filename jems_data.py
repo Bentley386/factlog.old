@@ -4,6 +4,7 @@ Utilities for retrieving and managing the JEMS data from the MSSQL database.
 
 import pyodbc
 import pandas as pd
+import numpy as np
 
 class DieselDs:
     """Class for retrieving the JEMS data from the database."""
@@ -104,3 +105,24 @@ class DieselDs:
         Searches for a sensor name in the dataframe of all sensors.
         """
         return self.sdf[self.sdf['name'].str.contains(id) == True]
+
+
+def reshape_sensor_data(input_df):
+    """
+    Reshape a dataframe with sensor values in schema as in the DB into a data
+    frame with one row per timestamp and one column per sensor.
+    """
+    def sensor_value_to_table(sensor_row, table):
+        """Write a sensor value to the reshaped table."""
+        print(f'Row: {sensor_row.name}')
+        table.at[sensor_row['timestamp'], sensor_row['sensors_id']] = sensor_row['value']
+
+    print('Preparing empty dataframe')
+    # prepare the reshaped table
+    output_df = pd.DataFrame(
+        index = np.sort(input_df["timestamp"].unique()),
+        columns = np.sort(input_df["sensors_id"].unique()))
+    # copy individual sensor values
+    print('Applying function')
+    input_df.apply(lambda row: sensor_value_to_table(row, output_df), axis=1)
+    return output_df
