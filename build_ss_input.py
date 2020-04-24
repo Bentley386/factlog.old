@@ -9,7 +9,10 @@ import numpy as np
 
 # sensors per component
 COMPONENT_SENSORS = {
-    "B100" : ['50','53','62','63','64','65','97','98'] # removed due to sparsity: '96'
+    "B100" : ['50','53','55','62','63','64','65','97','98'], # removed due to sparsity: '96'
+    "B200" : ['6','7','8','9','10','11','12','13','17','31','32','33','34','35','39','49','52','56','58','66','67','68',
+                '69','70','71','72','73','74','75','76'], # removed due to sparsity: '36'
+    "B300" : ['14','15','16','40','48','51','57','77','78','79','80','81'], # removed due to sparsity: '61'
 }
 
 def normalize_timestamp(timestamp_series):
