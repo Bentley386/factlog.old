@@ -13,6 +13,14 @@ COMPONENT_SENSORS = {
     "B200" : ['6','7','8','9','10','11','12','13','17','31','32','33','34','35','39','49','52','56','58','66','67','68',
                 '69','70','71','72','73','74','75','76'], # removed due to sparsity: '36'
     "B300" : ['14','15','16','40','48','51','57','77','78','79','80','81'], # removed due to sparsity: '61'
+    "B102" : ['19','20','85'], # Water tank 1 (removed due to sparsity: '117')
+    "turbine" : ['105','106','107'],
+    "B201" : ['21','22','86'], # Water tank 2 (removed due to sparsity: '125')
+    "B202" : ['23','24','25','87'], # Diesel tank (removed due to sparsity: '126')
+    # Catalyst tank (D103), lime tank (D104), mixer (D500) are not included because all sensors are too rare
+    # B200-extended are sensors from B200 with sensors from subcomponents: water tank 2, diesel tank and turbine
+    "B200-extended" : ['6','7','8','9','10','11','12','13','17','31','32','33','34','35','39','49','52','56','58','66','67',
+                        '68','69','70','71','72','73','74','75','76','21','22','86','23','24','25','87','105','106','107'],
 }
 
 def normalize_timestamp(timestamp_series):
