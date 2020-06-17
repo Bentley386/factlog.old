@@ -12,6 +12,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from dotenv import load_dotenv
+from collections import Counter
+from sklearn.cluster import KMeans
 
 # get settings from .env file
 if os.path.exists(".env"):
@@ -122,5 +124,46 @@ def prepare_streamstory_input():
     component_data.to_csv(args.output_csv)
 
 
+class StateGraph:
+    """
+    Has information about clusters/states and transitions between them.
+    """
+    def __init__(self, sensor_values, sensor_list):
+        """
+        input_csv must be formatted for StreamStory.
+        """
+        self.sensor_values = sensor_values
+        self.sensor_list = sensor_list
+        self.create_clusters()
+
+    def create_clusters(self):
+        # filter out just needed sensor values
+        values = self.sensor_values.filter(items=["timestamp"] + self.sensor_list)
+
+        # TODO normalization
+
+        clustering = KMeans(n_clusters=5).fit(values.filter(items=self.sensor_list))
+        centroids = pd.DataFrame(clustering.cluster_centers_, columns=self.sensor_list)
+        print(centroids)
+
+        # label states with cluster and print cluster sizes
+        cluster_labels = clustering.predict(values.filter(items=self.sensor_list))
+        print(sorted(Counter(cluster_labels).items()))
+
+
+def create_state_graph():
+    """
+    Prepares data for clustering, creates clusters and returns StateGraph object.
+    """
+    # read arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--input-csv', help="Path to input csv with sensor data formatted for StreamStory.")
+    parser.add_argument('-sl', '--sensor-list', nargs='+', help="List of senors that will be used for clustering.")
+    args = parser.parse_args()
+    sensor_values = pd.read_csv(open(args.input_csv))
+    return StateGraph(sensor_values, args.sensor_list)
+
+
 if __name__ == "__main__":
-    prepare_streamstory_input()
+    # prepare_streamstory_input()
+    graph = create_state_graph()
