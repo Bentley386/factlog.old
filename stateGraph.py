@@ -30,6 +30,8 @@ import argparse
 import sklearn
 from sklearn.cluster import KMeans
 from sklearn import preprocessing
+import plotly.express as px
+import plotly.graph_objects as go
 
 
 class StateGraph(object):
@@ -53,8 +55,6 @@ class StateGraph(object):
 
     def fit(self, data: pd.DataFrame) -> None:
         """Fit to data. Expect Pandas DataFrame as input."""
-        # TODO: is right normalisation used?
-
         if 'timestamp' not in data:
             raise RuntimeError("Expecting column called `timestamp`.")
 
@@ -67,8 +67,7 @@ class StateGraph(object):
 
         self.clustering.fit(norm_data)
 
-        self.centroids = pd.DataFrame(data=self.normalisation.inverse_transform(norm_data),
-                                      index=timestamp,
+        self.centroids = pd.DataFrame(data=self.normalisation.inverse_transform(self.clustering.cluster_centers_),
                                       columns=norm_data.columns)
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
@@ -85,6 +84,19 @@ class StateGraph(object):
 
         labels = pd.DataFrame(self.clustering.predict(norm_data), columns=['label'])
         return pd.concat([data, labels], axis=1)
+
+    def fit_transform(self, data: pd.DataFrame) -> pd.DataFrame:
+        self.fit(data)
+        return self.transform(data)
+
+    def get_figure(self) -> go.Figure:
+        """Returns plotly object Figure displaying centroids' coordinates."""
+        fig = px.parallel_coordinates(
+            self.centroids,
+            color=self.centroids.index,
+            dimensions=self.centroids.columns
+        )
+        return fig
 
 
 def create_state_graph():
@@ -107,7 +119,9 @@ if __name__ == "__main__":
     # graph = StateGraph(n_clusters=5)
     # sensor_values = pd.read_csv(open('../B100_hour_SS_input.csv'))
     # values = sensor_values.filter(items=["timestamp"] + sensor_list)
-    # graph.fit(values)
-    # result = graph.transform(values)
+    # # graph.fit(values)
+    # # result = graph.transform(values)
+    # result = graph.fit_transform(values)
     # result.to_csv('../output.csv', index=False)
-    # #print(result)
+    # print(result)
+    # graph.get_figure().show()
