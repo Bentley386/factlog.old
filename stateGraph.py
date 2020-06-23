@@ -41,49 +41,50 @@ class StateGraph(object):
     # I would propose we follow a sklearn-type code organisation: init just
     # builds the object; a `fit` function needs to be called to process the data
 
-    # def __init__(self, n_clusters: int) -> None:
-    #     """
-    #     Prepare the object.
-    #     """
-    #     self.clustering = KMeans(n_clusters = n_clusters)
-    #     self.normalisation = preprocessing.MinMaxScaler()
-    #     # TODO: ...
-    #
-    #
-    # def fit(self, data: pd.DataFrame):
-    #     """Fit to data. Expect Pandas DataFrame as input."""
-    #     # fit normaliser to data and scale dataset
-    #     # TODO: !!! data will typically contain a timestamp column - check for
-    #     #       it, remember it and handle it appropriatly (it shouldn't be
-    #     #       normalised etc.)
-    #     # TODO: this is just a draft - check if this normalisation is ok
-    #     norm_data = self.normalisation.fit_transform(data)
-    #     self.clustering.fit(norm_data)
-    #     # TODO: ...
-
-
-
-    def __init__(self, sensor_values, sensor_list):
+    def __init__(self, n_clusters: int) -> None:
         """
-        input_csv must be formatted for StreamStory.
+        Prepare the object.
         """
-        self.sensor_values = sensor_values
-        self.sensor_list = sensor_list
-        self.create_clusters()
+        self.clustering = KMeans(n_clusters=n_clusters)
+        self.normalisation = preprocessing.MinMaxScaler()
 
-    def create_clusters(self):
-        # filter out just needed sensor values
-        values = self.sensor_values.filter(items=["timestamp"] + self.sensor_list)
+        # DataFrame where each row is coordinate of a centroid
+        self.centroids = None
 
-        # TODO normalization
+    def fit(self, data: pd.DataFrame) -> None:
+        """Fit to data. Expect Pandas DataFrame as input."""
+        # TODO: is right normalisation used?
 
-        clustering = KMeans(n_clusters=5).fit(values.filter(items=self.sensor_list))
-        centroids = pd.DataFrame(clustering.cluster_centers_, columns=self.sensor_list)
-        print(centroids)
+        if 'timestamp' not in data:
+            raise RuntimeError("Expecting column called `timestamp`.")
 
-        # label states with cluster and print cluster sizes
-        cluster_labels = clustering.predict(values.filter(items=self.sensor_list))
-        print(sorted(Counter(cluster_labels).items()))
+        timestamp = data['timestamp']
+        without_time = data.drop(labels='timestamp', axis='columns')
+
+        norm_data = pd.DataFrame(data=self.normalisation.fit_transform(without_time),
+                                 index=timestamp,
+                                 columns=without_time.columns)
+
+        self.clustering.fit(norm_data)
+
+        self.centroids = pd.DataFrame(data=self.normalisation.inverse_transform(norm_data),
+                                      index=timestamp,
+                                      columns=norm_data.columns)
+
+    def transform(self, data: pd.DataFrame) -> pd.DataFrame:
+        """" Returns data with column `label` which has index of the closest cluster for each sample. """
+        if 'timestamp' not in data:
+            raise RuntimeError("Expecting column called `timestamp`.")
+
+        timestamp = data['timestamp']
+        without_time = data.drop(labels='timestamp', axis='columns')
+
+        norm_data = pd.DataFrame(data=self.normalisation.transform(without_time),
+                                 index=timestamp,
+                                 columns=without_time.columns)
+
+        labels = pd.DataFrame(self.clustering.predict(norm_data), columns=['label'])
+        return pd.concat([data, labels], axis=1)
 
 
 def create_state_graph():
@@ -101,3 +102,12 @@ def create_state_graph():
 
 if __name__ == "__main__":
     graph = create_state_graph()
+
+    # sensor_list = ["50", "53", "55", "62", "63", "64", "65", "97", "98"]
+    # graph = StateGraph(n_clusters=5)
+    # sensor_values = pd.read_csv(open('../B100_hour_SS_input.csv'))
+    # values = sensor_values.filter(items=["timestamp"] + sensor_list)
+    # graph.fit(values)
+    # result = graph.transform(values)
+    # result.to_csv('../output.csv', index=False)
+    # #print(result)
