@@ -37,6 +37,11 @@ import plotly.graph_objects as go
 class StateGraph(object):
     """
     Has information about clusters/states and transitions between them.
+
+    Attributes:
+        centroids: DataFrame of shape (n_centroids, n_features): Coordinates of centroids.
+        transitions: ndarray of shape (n_clusters, n_clusters): Distribution of transitions where number in row i and
+            column j represents transition from state i to state j. Numbers on diagonal are 0.
     """
     # TODO: Should also support inspection and visualisation for convenience
 
@@ -47,11 +52,14 @@ class StateGraph(object):
         """
         Prepare the object.
         """
+        self.n_clusters = n_clusters
         self.clustering = KMeans(n_clusters=n_clusters)
         self.normalisation = preprocessing.MinMaxScaler()
 
         # DataFrame where each row is coordinate of a centroid
         self.centroids = None
+        # Matrix of transitions with values between 0 and 1
+        self.transitions = None
 
     def fit(self, data: pd.DataFrame) -> None:
         """Fit to data. Expect Pandas DataFrame as input."""
@@ -83,6 +91,16 @@ class StateGraph(object):
                                  columns=without_time.columns)
 
         labels = pd.DataFrame(self.clustering.predict(norm_data), columns=['label'])
+
+        # Calculate transitions between states
+        self.transitions = np.zeros([self.n_clusters, self.n_clusters])
+        prev = -1
+        for index, row in labels.iterrows():
+            if index > 0 and prev != row['label']:
+                self.transitions[prev, row['label']] += 1
+            prev = row['label']
+        self.transitions = np.apply_along_axis(lambda row : row / row.sum(), 1, self.transitions)
+
         return pd.concat([data, labels], axis=1)
 
     def fit_transform(self, data: pd.DataFrame) -> pd.DataFrame:
@@ -119,9 +137,10 @@ if __name__ == "__main__":
     # graph = StateGraph(n_clusters=5)
     # sensor_values = pd.read_csv(open('../B100_hour_SS_input.csv'))
     # values = sensor_values.filter(items=["timestamp"] + sensor_list)
-    # # graph.fit(values)
-    # # result = graph.transform(values)
+    # graph.fit(values)
+    # result = graph.transform(values)
     # result = graph.fit_transform(values)
     # result.to_csv('../output.csv', index=False)
     # print(result)
+    # print(graph.transitions)
     # graph.get_figure().show()
