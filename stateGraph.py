@@ -117,17 +117,19 @@ class StateGraph(object):
         return fig
 
 
-def create_state_graph():
+def create_state_graph(n_clusters):
     """
     Prepares data for clustering, creates clusters and returns StateGraph object.
     """
     # read arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input-csv', help="Path to input csv with sensor data formatted for StreamStory.")
-    parser.add_argument('-sl', '--sensor-list', nargs='+', help="List of senors that will be used for clustering.")
+    # parser.add_argument('-sl', '--sensor-list', nargs='+', help="List of senors that will be used for clustering.")
     args = parser.parse_args()
     sensor_values = pd.read_csv(open(args.input_csv))
-    return StateGraph(sensor_values, args.sensor_list)
+    graph = StateGraph(n_clusters=n_clusters)
+    graph.fit(sensor_values)
+    return graph
 
 
 if __name__ == "__main__":
