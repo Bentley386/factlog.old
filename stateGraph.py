@@ -33,6 +33,8 @@ from sklearn import preprocessing
 import plotly.express as px
 import plotly.graph_objects as go
 
+from transitionModel import TransitionModel
+
 
 class StateGraph(object):
     """
@@ -42,6 +44,7 @@ class StateGraph(object):
         centroids: DataFrame of shape (n_centroids, n_features): Coordinates of centroids.
         transitions: ndarray of shape (n_clusters, n_clusters): Distribution of transitions where number in row i and
             column j represents transition from state i to state j. Numbers on diagonal are 0.
+        transition_model: TransitionModel that can predict next state.
     """
     # TODO: Should also support inspection and visualisation for convenience
 
@@ -60,6 +63,8 @@ class StateGraph(object):
         self.centroids = None
         # Matrix of transitions with values between 0 and 1
         self.transitions = None
+        # Model that can predict next state. Must be initialized manually.
+        self.transition_model = None
 
     def fit(self, data: pd.DataFrame) -> None:
         """Fit to data. Expect Pandas DataFrame as input."""
