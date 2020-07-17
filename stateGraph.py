@@ -120,7 +120,7 @@ if __name__ == "__main__":
     sensor_values = pd.read_csv(open('../B100_hour_SS_input.csv'), index_col=0)
     values = sensor_values.filter(items=["timestamp"] + sensor_list)
     result = graph.fit_transform(values)
-    # result.to_csv('../output.csv', index=False)
+    result.to_csv('../stateGraphOutput.csv')
     print(result)
     print(graph.transitions)
     # graph.get_figure().show()

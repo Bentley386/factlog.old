@@ -127,5 +127,4 @@ def prepare_streamstory_input():
 
 if __name__ == "__main__":
     # prepare_streamstory_input()
-    graph = stateGraph.create_state_graph(5)
-    print(graph.centroids)
+    graph = stateGraph.StateGraph(5)
