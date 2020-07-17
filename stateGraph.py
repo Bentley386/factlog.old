@@ -40,6 +40,8 @@ class StateGraph(object):
     """
     Has information about clusters/states and transitions between them.
 
+    Data must have timestamp as index.
+
     Attributes:
         centroids: DataFrame of shape (n_centroids, n_features): Coordinates of centroids.
         transitions: ndarray of shape (n_clusters, n_clusters): Distribution of transitions where number in row i and
@@ -67,16 +69,10 @@ class StateGraph(object):
         self.transition_model = None
 
     def fit(self, data: pd.DataFrame) -> None:
-        """Fit to data. Expect Pandas DataFrame as input."""
-        if 'timestamp' not in data:
-            raise RuntimeError("Expecting column called `timestamp`.")
-
-        timestamp = data['timestamp']
-        without_time = data.drop(labels='timestamp', axis='columns')
-
-        norm_data = pd.DataFrame(data=self.normalisation.fit_transform(without_time),
-                                 index=timestamp,
-                                 columns=without_time.columns)
+        """Fit to data. Expect Pandas DataFrame as input with timestamp as index."""
+        norm_data = pd.DataFrame(data=self.normalisation.fit_transform(data),
+                                 index=data.index,
+                                 columns=data.columns)
 
         self.clustering.fit(norm_data)
 
@@ -84,18 +80,13 @@ class StateGraph(object):
                                       columns=norm_data.columns)
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
-        """" Returns data with column `label` which has index of the closest cluster for each sample. """
-        if 'timestamp' not in data:
-            raise RuntimeError("Expecting column called `timestamp`.")
+        """ Expect Pandas DataFrame as input with timestamp as index.
+            Returns data with column `label` which has index of the closest cluster for each sample. """
+        norm_data = pd.DataFrame(data=self.normalisation.transform(data),
+                                 index=data.index,
+                                 columns=data.columns)
 
-        timestamp = data['timestamp']
-        without_time = data.drop(labels='timestamp', axis='columns')
-
-        norm_data = pd.DataFrame(data=self.normalisation.transform(without_time),
-                                 index=timestamp,
-                                 columns=without_time.columns)
-
-        labels = pd.DataFrame(self.clustering.predict(norm_data), columns=['label'])
+        labels = pd.DataFrame(self.clustering.predict(norm_data), index=norm_data.index, columns=['label'])
 
         # Calculate transitions between states
         self.transitions = np.zeros([self.n_clusters, self.n_clusters])
@@ -109,6 +100,7 @@ class StateGraph(object):
         return pd.concat([data, labels], axis=1)
 
     def fit_transform(self, data: pd.DataFrame) -> pd.DataFrame:
+        """ Expect Pandas DataFrame as input with timestamp as index. """
         self.fit(data)
         return self.transform(data)
 
@@ -122,32 +114,13 @@ class StateGraph(object):
         return fig
 
 
-def create_state_graph(n_clusters):
-    """
-    Prepares data for clustering, creates clusters and returns StateGraph object.
-    """
-    # read arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input-csv', help="Path to input csv with sensor data formatted for StreamStory.")
-    # parser.add_argument('-sl', '--sensor-list', nargs='+', help="List of senors that will be used for clustering.")
-    args = parser.parse_args()
-    sensor_values = pd.read_csv(open(args.input_csv))
-    graph = StateGraph(n_clusters=n_clusters)
-    graph.fit(sensor_values)
-    return graph
-
-
 if __name__ == "__main__":
-    graph = create_state_graph()
-
-    # sensor_list = ["50", "53", "55", "62", "63", "64", "65", "97", "98"]
-    # graph = StateGraph(n_clusters=5)
-    # sensor_values = pd.read_csv(open('../B100_hour_SS_input.csv'))
-    # values = sensor_values.filter(items=["timestamp"] + sensor_list)
-    # graph.fit(values)
-    # result = graph.transform(values)
-    # result = graph.fit_transform(values)
+    sensor_list = ["50", "53", "55", "62", "63", "64", "65", "97", "98"]
+    graph = StateGraph(n_clusters=5)
+    sensor_values = pd.read_csv(open('../B100_hour_SS_input.csv'), index_col=0)
+    values = sensor_values.filter(items=["timestamp"] + sensor_list)
+    result = graph.fit_transform(values)
     # result.to_csv('../output.csv', index=False)
-    # print(result)
-    # print(graph.transitions)
+    print(result)
+    print(graph.transitions)
     # graph.get_figure().show()
