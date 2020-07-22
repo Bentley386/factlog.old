@@ -26,6 +26,9 @@ class TransitionModel:
         self.model = HoeffdingTreeClassifier()
         self.history = None
         self.accuracy = None
+        # Number of all predictions and correct predictions for calculating accuracy
+        self.predictions = 0
+        self.correct_predictions = 0
 
     def delta(self, y: pd.Series) -> np.float64:
         """ Return slope of least squares linear fit. """
@@ -65,39 +68,18 @@ class TransitionModel:
         TODO: improve, calculate accuracy, maybe add possibility to learn in batches? """
         stream = DataStream(self.prepare_data(data))
         n = stream.n_remaining_samples()
-        # Test
-        # count_right = 0
-        # count_changes = 0
-        # count_wrong = 0
-        # count_same = 0
-        # count_success = 0
         for i in range(n):
             x, y = stream.next_sample()
-            # Test
-            # if self.model.predict(x)[0] == y[0]: count_right += 1
-            # else: count_wrong += 1
-            # if x[0][-1] != y[0]: count_changes += 1
-            # else: count_same += 1
-            # if self.model.predict(x)[0] == y[0] and x[0][-1] != y[0]: count_success += 1
+            if self.model.predict(x)[0] == y[0]:
+                self.correct_predictions += 1
             self.model.partial_fit(x, y)
-        # Test
-        # print("Right:", count_right)
-        # print("Wrong:", count_wrong)
-        # print("Changes:", count_changes)
-        # print("Same:", count_same)
-        # print("Success:", count_success)
-        # Results
-        # Right: 7874 (number of correct predictions)
-        # Wrong: 1279 (number of wrong predictions)
-        # Changes: 438 (number of changes of states)
-        # Same: 8715 (number of times a state stays the same)
-        # Success: 125 (number of correct predictions when state changed)
+        self.predictions += n
+        self.accuracy = self.correct_predictions / self.predictions
 
     def predict(self, data: pd.DataFrame = pd.DataFrame(), use_history: bool = True) -> List[int]:
         """ Argument data is a DataFrame with shape (n_samples, n_features).
         use_history tells whether or not history will be included in data before making prediction. If use_history is
         set to true, function will make n_samples+1 predictions, otherwise n_samples-window_size+1 predictions."""
-
         if not use_history and data.shape[0] < self.window_size:
             raise RuntimeError("Not enough measurements to make a prediction.")
         prepared_data = self.prepare_data(data, drop_last_row=False, use_history=use_history)
@@ -113,5 +95,6 @@ if __name__ == '__main__':
     tm = TransitionModel(5)
     tm.partial_fit(data[:-10])
     print(tm.predict(data[-10:]))
+    print(tm.accuracy)
     # print(tm.predict(data[-10:], use_history=False))
     # tm.predict(data[-1:], use_history=False)  # Runtime error
