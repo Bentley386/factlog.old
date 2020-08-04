@@ -91,7 +91,7 @@ class TransitionModel:
 
 
 if __name__ == '__main__':
-    data = pd.read_csv("../stateGraphOutput.csv", index_col=0)
+    data = pd.read_csv("../data/stateGraphOutput.csv", index_col=0)
     tm = TransitionModel(5)
     tm.partial_fit(data[:-10])
     print(tm.predict(data[-10:]))
