@@ -33,7 +33,7 @@ from sklearn import preprocessing
 import plotly.express as px
 import plotly.graph_objects as go
 
-from transitionModel import TransitionModel
+from transition_model import TransitionModel
 
 
 class StateGraph(object):
@@ -117,10 +117,10 @@ class StateGraph(object):
 if __name__ == "__main__":
     sensor_list = ["50", "53", "55", "62", "63", "64", "65", "97", "98"]
     graph = StateGraph(n_clusters=5)
-    sensor_values = pd.read_csv(open('../B100_hour_SS_input.csv'), index_col=0)
+    sensor_values = pd.read_csv(open('../data/B100_hour_SS_input.csv'), index_col=0)
     values = sensor_values.filter(items=["timestamp"] + sensor_list)
     result = graph.fit_transform(values)
-    result.to_csv('../stateGraphOutput.csv')
+    result.to_csv('../data/stateGraphOutput.csv')
     print(result)
     print(graph.transitions)
     # graph.get_figure().show()
