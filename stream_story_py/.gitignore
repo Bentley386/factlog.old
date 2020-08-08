@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 
 .idea/
+
+# plotly
+temp-plot.html
