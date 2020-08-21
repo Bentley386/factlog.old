@@ -37,7 +37,8 @@ def create_figure(x_name):
 
     fig = go.Figure(data=graphs)
     fig.update_layout(barmode='group')
-    fig.write_html("../../results/model_{}_avg_f1.html".format(x_name))
+    fig.write_html("../../results/model_{}_avg_f1.html".format(x_name), include_plotlyjs='cdn', full_html=False)
+
 
 # read data from csv
 data = pd.read_csv(input_location + input_data[0], index_col=0)
@@ -49,7 +50,7 @@ data['model_normalized'] = data.apply(combine, axis='columns')
 
 # plot of average f1 for each machine learning method
 fig = px.bar(data.groupby(by=['model_normalized']).mean(), y='f1')
-fig.write_html("../../results/model_avg_f1.html")
+fig.write_html("../../results/model_avg_f1.html", include_plotlyjs='cdn', full_html=False)
 
 
 # plot of average f1 for each window for each machine learning method
@@ -63,7 +64,7 @@ for model in grouped.model_normalized.unique():
 
 fig = go.Figure(data=graphs)
 fig.update_layout(barmode='group')
-fig.write_html("../../results/model_window_avg_f1.html")
+fig.write_html("../../results/model_window_avg_f1.html", include_plotlyjs='cdn', full_html=False)
 
 
 create_figure('name')
