@@ -30,8 +30,6 @@ import argparse
 import sklearn
 from sklearn.cluster import KMeans
 from sklearn import preprocessing
-import plotly.express as px
-import plotly.graph_objects as go
 
 from transition_model import TransitionModel
 
@@ -104,15 +102,6 @@ class StateGraph(object):
         self.fit(data)
         return self.transform(data)
 
-    def get_figure(self) -> go.Figure:
-        """Returns plotly object Figure displaying centroids' coordinates."""
-        fig = px.parallel_coordinates(
-            self.centroids,
-            color=self.centroids.index,
-            dimensions=self.centroids.columns
-        )
-        return fig
-
 
 if __name__ == "__main__":
     sensor_list = ["50", "53", "55", "62", "63", "64", "65", "97", "98"]
@@ -123,4 +112,3 @@ if __name__ == "__main__":
     result.to_csv('../data/stateGraphOutput.csv')
     print(result)
     print(graph.transitions)
-    # graph.get_figure().show()
