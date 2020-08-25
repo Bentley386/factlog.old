@@ -76,10 +76,9 @@ class Visualization():
         """Returns a figure containing a histogram for each sensor 
         for the data in a given cluster (cluster index starts at 0).
         """
-        
-        maxcluster = np.amax(self.labels)
-        if cluster > maxcluster:
-            raise ValueError(f"cluster must be between 0 and {maxcluster}")
+
+        if cluster not in self.labels.flatten():
+            raise ValueError(f"cluster must be between 0 and {np.amax(self.labels)}")
             
         filtered = self.data[self.data["label"] == cluster]
         cols = filtered.columns.values[:-1]
@@ -104,5 +103,4 @@ if __name__ == "__main__":
     sensor_values = pd.read_csv(open('../data/B100_hour_SS_input.csv'), index_col=0)
     values = sensor_values.filter(items=["timestamp"] + sensor_list)
     visual = Visualization(values,5)
-    #visual.get_histograms(2)
     plot(visual.get_histograms(2),auto_open=True)
