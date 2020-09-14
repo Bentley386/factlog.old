@@ -16,7 +16,7 @@ from collections import Counter
 from sklearn.cluster import KMeans
 
 # get settings from .env file
-if os.path.exists(".env"):
+if os.path.exists("../.env"):
     load_dotenv()
 else:
     raise RuntimeError("Expecting .env file with settings.")
