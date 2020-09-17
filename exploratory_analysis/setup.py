@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="exploratory_analysis_FACTLOG-klemenkenda", # Replace with your own project and username
+    name="ea-factlog", # Replace with your own project and username
     version="0.0.1",
     author="Klemen Kenda",
     author_email="klemen.kenda@ijs.si",
