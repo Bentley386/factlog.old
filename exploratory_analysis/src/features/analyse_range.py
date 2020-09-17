@@ -21,8 +21,8 @@ if os.path.exists("../.env"):
 else:
     raise RuntimeError("Expecting .env file with settings.")
 
-import jems_data
-import stateGraph
+from src.data import jems_data
+# import src.data.stateGraph
 
 def load_DB_and_reshape():
     # read arguments
@@ -127,4 +127,4 @@ def prepare_streamstory_input():
 
 if __name__ == "__main__":
     # prepare_streamstory_input()
-    graph = stateGraph.StateGraph(5)
+    # graph = stateGraph.StateGraph(5)

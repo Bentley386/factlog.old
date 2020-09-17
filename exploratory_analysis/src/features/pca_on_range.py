@@ -28,8 +28,7 @@ if os.path.exists("../.env"):
 else:
     raise RuntimeError("Expecting .env file with settings.")
 
-from jems_data import DieselDs
-
+from src.data.jems_data import DieselDs
 
 def write_to_table(row, table):
     """Write a sensor row to a table."""
