@@ -28,14 +28,15 @@ def download_url(url, save_path, chunk_size=256 * 1024):
     print(" Finished.\n")
 
 
-# download files
-print("### DOWNLOADING TO INTERIM FOLDER ###")
-for i in range(len(targets)):
-    download_url(files[i], targets[i])
+if __name__ == "__main__":
+    # download files
+    print("### DOWNLOADING TO INTERIM FOLDER ###")
+    for i in range(len(targets)):
+        download_url(files[i], targets[i])
 
-# unzipping
-print("### UNZIPPING TO RAW FOLDER ###")
-for i in range(len(targets)):
-    with zipfile.ZipFile(targets[i], 'r') as zip_ref:
-        print("Starting to unzip into", raw_targets[i])
-        zip_ref.extractall(raw_targets[i])
+    # unzipping
+    print("### UNZIPPING TO RAW FOLDER ###")
+    for i in range(len(targets)):
+        with zipfile.ZipFile(targets[i], 'r') as zip_ref:
+            print("Starting to unzip into", raw_targets[i])
+            zip_ref.extractall(raw_targets[i])
