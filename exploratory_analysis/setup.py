@@ -1,22 +1,10 @@
-import setuptools
+from setuptools import find_packages, setup
 
-with open("README.md", "r") as fh:
-    long_description = "test" # fh.read()
-
-setuptools.setup(
-    name="eafactlog", # Replace with your own project and username
-    version="0.0.1",
-    author="Klemen Kenda",
-    author_email="klemen.kenda@ijs.si",
-    description="Exploratory analysis for FACTLOG",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/JozefStefanInstitute/factlog",
-    packages=setuptools.find_packages('.'),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-    ],
-    python_requires='>=3.6',
+setup(
+    name='src',
+    packages=find_packages(),
+    version='0.1.0',
+    description='desc',
+    author='Klemen Kenda',
+    license='none',
 )
