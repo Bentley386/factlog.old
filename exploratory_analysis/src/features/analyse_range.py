@@ -21,8 +21,8 @@ if os.path.exists("../.env"):
 else:
     raise RuntimeError("Expecting .env file with settings.")
 
-import jems_data
-import stateGraph
+from src.data import jems_data
+# import src.data.stateGraph
 
 def load_DB_and_reshape():
     # read arguments
