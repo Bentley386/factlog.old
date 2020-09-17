@@ -3,7 +3,7 @@ Exploratory analysis of the NAIADES data sources.
 
 ## Use Case and Basic Data Descriptions
 * [JEMS](docs/JEMS.md) - original data in MSSQL
-* [Continental](docs/CONTINENTAL.md) - [original data]() - [Atena]()
+* [Continental](docs/CONTINENTAL.md) - [original data](https://docbox.maggioli.it/owncloud/s/wOz8BdS8Ovtxe7j) (p: twcPJH2Mfvtx) - [Atena](http://atena.ijs.si/data/factlog/continental_preliminary.zip)
 * [Tupras](docs/TUPRAS.md)
 
 To download all the data and extract it to raw folder start the following:

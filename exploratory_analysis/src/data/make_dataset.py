@@ -2,18 +2,18 @@
 
 # define files to download
 files = [
-    'http://atena.ijs.si/data/naiades/tupras_preliminary.zip',
-    'http://atena.ijs.si/data/naiades/continental_preliminary.zip'
+    # 'http://atena.ijs.si/data/factlog/tupras_preliminary.zip',
+    'http://atena.ijs.si/data/factlog/continental_preliminary.zip'
 ]
 
 targets = [
-    '../../data/interim/tupras_preliminary.zip',
-    '../../data/interim/continental_preliminary.zip',
+    # '../../data/interim/tupras_preliminary.zip',
+    '../../../data/interim/continental_preliminary.zip',
 ]
 
 raw_targets = [
-    '../../data/raw/tupras',
-    '../../data/raw/continental',
+    # '../../data/raw/tupras',
+    '../../../data/raw/continental',
 ]
 
 import requests, zipfile, io, sys

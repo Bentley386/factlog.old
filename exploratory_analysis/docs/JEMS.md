@@ -12,8 +12,9 @@ Partners involved in JEMS use case and relevant to JSI's work are:
 
 
 ## Data Availability
-
 Data from the "Canada" machine is available in MSSQL historian database.
+Processed datasets are also available in the internal Dropbox: `Factlog/Use-cases/JEMS/data_overview`.
+Upload all the data into `data/processed/jems` directory.
 
 
 ## Use case definition
