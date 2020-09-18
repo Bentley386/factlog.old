@@ -9,14 +9,10 @@ Partners involved in CONTINENTAL use case and relevant to JSI's work are:
 * Alin Popa
 * Andreea Paunescu
 
-
-## Data Availability
-
-### Prerequisites
-MS Access to load the file
-
 ### Content of the file
-On the header of the file you will find the next Fields:
+There is no header in the CSV files.
+The header has to be set manually, e.g. when loading CSV to Pandas.
+
 ```
 Id, Timestamp, SerialNumber, Station, StationType, StationNumber, Material, TestDescription, TestValue, TestResult, USL, LSL, Format
 ```
