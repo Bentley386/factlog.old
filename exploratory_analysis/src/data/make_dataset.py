@@ -12,12 +12,12 @@ targets = [
 ]
 
 raw_targets = [
-    '../../data/raw/tupras',
+    '../../../data/raw/tupras',
     '../../../data/raw/continental',
 ]
 
 import requests, zipfile, io, sys
-def download_url(url, save_path, chunk_size=256 * 1024):
+def download_url(url, save_path, chunk_size=4096 * 1024):
     print("Starting download", url)
     r = requests.get(url, stream=True)
     with open(save_path, 'wb') as fd:
