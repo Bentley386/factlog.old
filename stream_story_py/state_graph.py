@@ -57,7 +57,7 @@ class StateGraph(object):
         """
         self.n_clusters = n_clusters
         self.clustering = KMeans(n_clusters=n_clusters)
-        self.normalisation = preprocessing.MinMaxScaler()
+        self.normalisation = preprocessing.StandardScaler()
 
         # DataFrame where each row is coordinate of a centroid
         self.centroids = None
