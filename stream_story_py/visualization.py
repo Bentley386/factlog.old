@@ -103,4 +103,4 @@ if __name__ == "__main__":
     sensor_values = pd.read_csv(open('../data/B100_hour_SS_input.csv'), index_col=0)
     values = sensor_values.filter(items=["timestamp"] + sensor_list)
     visual = Visualization(values,5)
-    plot(visual.get_histograms(2),auto_open=True)
+    plot(visual.get_PCA(),auto_open=True)

@@ -25,9 +25,7 @@ State transition model
 
 import pandas as pd
 import numpy as np
-import argparse
 
-import sklearn
 from sklearn.cluster import KMeans
 from sklearn import preprocessing
 
